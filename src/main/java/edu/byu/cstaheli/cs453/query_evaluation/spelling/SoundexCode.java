@@ -1,14 +1,26 @@
 package edu.byu.cstaheli.cs453.query_evaluation.spelling;
 
 /**
- * Created by cstaheli on 6/8/2017.
+ * Allows turning a word into it's representative Soundex code. This is useful for Spell Checking.
+ * For example, the misspelled word "extenssions" has the same Soundex encoding as the correctly
+ * spelled word "extensions": "E235". It isn't foolproof though. Some words, like "poiner" and
+ * "pointer" have different Soundex codes, "P560" and "P536", respectively.
  */
 public class SoundexCode
 {
-    public static String getSoundexEncoding(String word)
+    /**
+     * Gets the Soundex encoding for a given word.
+     *
+     * @param word the word to encode.
+     * @return the Soundex encoding for the word.
+     * @throws IllegalArgumentException if any characters in the word aren't letters.
+     */
+    public static String encode(String word)
     {
         char[] wordArray = word.toUpperCase().toCharArray();
         char firstChar = wordArray[0];
+        //Ensures the first character is a valid one
+        getSoundexCode(firstChar);
         for (int i = 1; i < wordArray.length; ++i)
         {
             wordArray[i] = getSoundexCode(wordArray[i]);
@@ -16,9 +28,9 @@ public class SoundexCode
 
         StringBuilder soundexEncoding = new StringBuilder();
         soundexEncoding.append(firstChar);
-        for (int i = 1; i < wordArray.length; i++)
+        for (int i = 1; i < wordArray.length; ++i)
         {
-            if (wordArray[i] != wordArray[i-1] && wordArray[i] != '-')
+            if (wordArray[i] != wordArray[i - 1] && wordArray[i] != '-')
             {
                 soundexEncoding.append(wordArray[i]);
             }
@@ -29,6 +41,12 @@ public class SoundexCode
         return soundexEncoding.substring(0, 4);
     }
 
+    /**
+     * Gets the soundex representation of a letter.
+     *
+     * @param character the letter.
+     * @return the soundex representation of a letter.
+     */
     private static char getSoundexCode(char character)
     {
         switch (character)
@@ -71,8 +89,15 @@ public class SoundexCode
         }
     }
 
-    public static boolean wordsHaveSameSoundexCode(String first, String second)
+    /**
+     * Determines if two words have the same Soundex encoding.
+     *
+     * @param first  the first word.
+     * @param second the second word.
+     * @return true if they have they same encoding, false otherwise.
+     */
+    public static boolean wordsHaveSameEncoding(String first, String second)
     {
-        return getSoundexEncoding(first).equals(getSoundexEncoding(second));
+        return encode(first).equals(encode(second));
     }
 }
