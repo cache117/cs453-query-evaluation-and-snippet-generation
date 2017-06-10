@@ -11,12 +11,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by cstaheli on 5/11/2017.
+ * Contains functionality to parse Wiki documents into a map of strings and the frequency of those words.
  */
 public class DocumentProcessor
 {
     private Map<String, Integer> wordCounts;
 
+    /**
+     * Creates a {@link DocumentProcessor} from a file.
+     *
+     * @param fileName the name of the file to process.
+     * @see LineProcessor
+     */
     public DocumentProcessor(String fileName)
     {
         wordCounts = new TreeMap<>();
@@ -33,23 +39,44 @@ public class DocumentProcessor
         }
     }
 
+    /**
+     * Reads the file into a list of strings, representing each line.
+     *
+     * @param fileName the name of the file to read.
+     * @return a list of the lines in the file.
+     * @throws IOException if an I/O error occurs reading from the file or a malformed or unmappable byte sequence
+     *                     is read
+     */
     private List<String> readFile(String fileName) throws IOException
     {
         //A lot of the files aren't encoded with UTF-8
         return Files.readAllLines(Paths.get(fileName), Charset.forName("ISO-8859-1"));
     }
 
+    /**
+     * Gets the count of the word in the processed file.
+     * @param word the word to get the count of.
+     * @return the count of the word in the processed file.
+     */
     @Nullable
     public Integer getCount(String word)
     {
         return wordCounts.get(word);
     }
 
+    /**
+     * Gets all of the word counts for all words in the processed file.
+     * @return all of the word counts for all words in the processed file.
+     */
     public Map<String, Integer> getWordCounts()
     {
         return wordCounts;
     }
 
+    /**
+     * Adds words to the processor. These will be stored and tallied as necessary.
+     * @param words the new words to add.
+     */
     private void addToWordCounts(List<String> words)
     {
         for (String word : words)

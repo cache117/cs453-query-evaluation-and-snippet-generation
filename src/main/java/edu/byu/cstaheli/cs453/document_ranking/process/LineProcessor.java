@@ -8,12 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by cstaheli on 5/13/2017.
+ * Contains functionality to parse lines into a list of strings. This sanitizes the words and strips out the non-words,
+ * stopwords, and stems the words.
+ * @see WordTokenizer
+ * @see StopWordsRemover
+ * @see PorterStemmer
  */
 public class LineProcessor
 {
-    private List<String> processedWords;
+    private final List<String> processedWords;
 
+    /**
+     * Creates a Line processor from a line.
+     * @param line the line to process.
+     * @see WordTokenizer
+     * @see StopWordsRemover
+     * @see PorterStemmer
+     */
     public LineProcessor(String line)
     {
         List<String> words = new WordTokenizer(line).getWords();
@@ -21,11 +32,21 @@ public class LineProcessor
         processedWords = stemWords(nonStopwords);
     }
 
+    /**
+     * Gets the processed words that were processed from the line.
+     * @return the processed words that were processed from the line.
+     */
     public List<String> getProcessedWords()
     {
         return processedWords;
     }
 
+    /**
+     * Stems the given words and returns them.
+     * @param words the words to them.
+     * @return the stemmed versions of the given words.
+     * @see PorterStemmer
+     */
     private List<String> stemWords(List<String> words)
     {
         List<String> stemmedWords = new ArrayList<>();
@@ -41,6 +62,12 @@ public class LineProcessor
         return stemmedWords;
     }
 
+    /**
+     * Removes the stopwords from the list of words.
+     * @param words the words to remove stopwords from.
+     * @return a list without stopwords in it.
+     * @see StopWordsRemover
+     */
     private List<String> removeStopwords(List<String> words)
     {
         List<String> nonStopwords = new ArrayList<>();

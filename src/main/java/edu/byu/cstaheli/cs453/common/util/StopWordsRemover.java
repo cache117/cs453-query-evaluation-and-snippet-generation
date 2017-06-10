@@ -8,15 +8,17 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
- * @author rajiv
- * @since Aug 26, 2004
+ * Represents all possible stopwords.
  */
 public class StopWordsRemover
 {
-    private Set<String> stopWords;
-    //private Set<String> validWords;
+    private final Set<String> stopWords;
     private static StopWordsRemover _instance;
 
+    /**
+     * Gets the instance of stop words, since there shouldn't be more than one.
+     * @return the instance of stop words
+     */
     public static StopWordsRemover getInstance()
     {
         if (_instance == null)
@@ -26,6 +28,10 @@ public class StopWordsRemover
         return _instance;
     }
 
+    /**
+     * Creates a {@link StopWordsRemover} from a file. This file must be src/main/resources/stopwords.txt or it will
+     * not work.
+     */
     private StopWordsRemover()
     {
         stopWords = new HashSet<>();
@@ -58,16 +64,20 @@ public class StopWordsRemover
         }
     }
 
+    /**
+     * Gets all stopwords.
+     * @return all stopwords.
+     */
     public Set<String> getStopWords()
     {
         return stopWords;
     }
 
-    public void setStopWords(Set<String> words)
-    {
-        stopWords = words;
-    }
-
+    /**
+     * Determines if a word is a stopword.
+     * @param word the word to check.
+     * @return true if the word is a stopword, false otherwise.
+     */
     public boolean contains(String word)
     {
         return stopWords.contains(word.toLowerCase().trim());

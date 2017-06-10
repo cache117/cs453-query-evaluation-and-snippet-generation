@@ -6,10 +6,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by cstaheli on 6/9/2017.
+ * Used to get spelling suggestions for a word.
  */
 public class SpellChecker
 {
+    /**
+     * Gets all of the possible spelling suggestions for <code>word</code>, using edit distance and SoundexCodes.
+     * @param word the word to check.
+     * @return valid spelling suggestions.
+     */
     public static Set<String> getSpellingSuggestions(String word)
     {
         if (Dictionary.getInstance().wordExists(word))
@@ -24,23 +29,55 @@ public class SpellChecker
         return spellingSuggestions;
     }
 
+    /**
+     * Determines which words from the dictionary have the same soundex code as <code>word</code>.
+     * @param word the word to check against.
+     * @return the words that have the same soundex code.
+     * @see Dictionary#getDictionaryWords()
+     * @see SoundexCode#wordsHaveSameEncoding(String, String)
+     */
     public static Set<String> getWordsWithSameSoundexCode(String word)
     {
-        Set<String> dictionaryWords = Dictionary.getInstance().getDictionaryWords();
-        return dictionaryWords
+        return getWordsWithSameSoundexCode(word, Dictionary.getInstance().getDictionaryWords());
+    }
+
+    /**
+     * Determines which words from <code>words</code> have the same soundex code as <code>word</code>.
+     * @param word the word to check against.
+     * @param words the set of words to compare.
+     * @return the words that have the same soundex code.
+     * @see SoundexCode#wordsHaveSameEncoding(String, String)
+     */
+    public static Set<String> getWordsWithSameSoundexCode(String word, Set<String> words)
+    {
+        return words
                 .stream()
-                .filter(s -> SoundexCode.wordsHaveSameEncoding(s, word))
+                .filter(dictionaryWord -> SoundexCode.wordsHaveSameEncoding(dictionaryWord, word))
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Determines which words from <code>words</code> have edit distance 2 from <code>word</code>.
+     * @param word the word to check against.
+     * @param words the set of words to compare.
+     * @return the words that have edit distance two.
+     * @see LevenshteinDistance#calculateDistance()
+     */
     public static Set<String> getWordsWithTwoEditDistance(String word, Set<String> words)
     {
         return words
                 .stream()
-                .filter(s -> new LevenshteinDistance(s, word).calculateDistance() <= 2)
+                .filter(dictionaryWord -> new LevenshteinDistance(dictionaryWord, word).calculateDistance() <= 2)
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Determines which words from the dictionary have edit distance 2 from <code>word</code>.
+     * @param word the word to check against.
+     * @return the words that have edit distance two.
+     * @see Dictionary#getDictionaryWords()
+     * @see LevenshteinDistance#calculateDistance()
+     */
     public static Set<String> getWordsWithTwoEditDistance(String word)
     {
         return getWordsWithTwoEditDistance(word, Dictionary.getInstance().getDictionaryWords());

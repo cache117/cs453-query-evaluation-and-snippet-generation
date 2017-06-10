@@ -1,7 +1,7 @@
 package edu.byu.cstaheli.cs453.document_ranking.index;
 
 /**
- * Created by cstaheli on 5/12/2017.
+ * Represents a entry in {@link Index}.
  */
 public class IndexEntry implements Comparable<IndexEntry>
 {
@@ -9,6 +9,12 @@ public class IndexEntry implements Comparable<IndexEntry>
     private final int frequency;
     private final int documentId;
 
+    /**
+     * Creates an {@link IndexEntry} from it's constituent parts.
+     * @param word the word in the entry.
+     * @param frequency the frequency of the word.
+     * @param documentId the document that the word is present in.
+     */
     public IndexEntry(String word, int frequency, int documentId)
     {
         this.word = word;
@@ -67,16 +73,28 @@ public class IndexEntry implements Comparable<IndexEntry>
         }
     }
 
+    /**
+     * Gets the word in the entry.
+     * @return the word in the entry.
+     */
     public String getWord()
     {
         return word;
     }
 
+    /**
+     * Gets the frequency of the word.
+     * @return the frequency of the word.
+     */
     public int getFrequency()
     {
         return frequency;
     }
 
+    /**
+     * Gets the document that the word is present in.
+     * @return the document that the word is present in.
+     */
     public int getDocumentId()
     {
         return documentId;

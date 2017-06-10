@@ -1,43 +1,57 @@
 package edu.byu.cstaheli.cs453.query_evaluation.log;
 
-import edu.byu.cstaheli.cs453.common.log.Log;
 import edu.byu.cstaheli.cs453.common.log.LogParser;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
- * Created by cstaheli on 6/9/2017.
+ * Contains functionality to parse Spelling Query Logs.
  */
 public class SpellingLogParser extends LogParser
 {
+    /**
+     * Creates a {@link SpellingLogParser} from a file.
+     *
+     * @param fileName the name of the file to create from.
+     */
     public SpellingLogParser(String fileName)
     {
         super(fileName);
     }
 
+    /**
+     * Gets the filter for the lines that should be read in. This filter will only keep non-empty lines.
+     *
+     * @return the filter for non-empty lines.
+     */
+    @Override
     protected Predicate<String> getLineFilter()
     {
         return line -> !line.isEmpty();
     }
 
+    /**
+     * Gets the line splitter for this log parser. This will split lines based on tabs.
+     * @return the line splitter based on tabs.
+     */
+    @Override
     protected Function<String, String[]> getLineSplitter()
     {
         return line -> line.split("\t");
     }
 
-    protected Log parseQueryLogFromLine(String[] line)
+    /**
+     * Parses the log into a Log. A SpellingQueryLog, to be precise.
+     * @param line the line to parse from.
+     * @return the Log from the line.
+     * @see SpellingQueryLog
+     */
+    @Override
+    protected SpellingQueryLog parseQueryLogFromLine(String[] line)
     {
         String anonId = line[0];
         String query = line[1];
-        return new QueryLog(anonId, query);
+        return new SpellingQueryLog(anonId, query);
     }
 }

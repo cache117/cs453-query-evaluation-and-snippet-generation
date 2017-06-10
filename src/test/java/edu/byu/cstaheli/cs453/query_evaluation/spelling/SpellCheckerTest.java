@@ -6,9 +6,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Created by cstaheli on 6/9/2017.
- */
 class SpellCheckerTest
 {
     @Test
