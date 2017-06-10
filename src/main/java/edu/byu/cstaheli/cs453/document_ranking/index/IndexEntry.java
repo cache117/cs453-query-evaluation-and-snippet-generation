@@ -1,7 +1,7 @@
 package edu.byu.cstaheli.cs453.document_ranking.index;
 
 /**
- * Represents a entry in {@link Index}.
+ * Represents a entry in {@link DocumentIndex}.
  */
 public class IndexEntry implements Comparable<IndexEntry>
 {

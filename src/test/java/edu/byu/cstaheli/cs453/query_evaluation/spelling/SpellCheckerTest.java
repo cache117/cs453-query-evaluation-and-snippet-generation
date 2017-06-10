@@ -1,5 +1,7 @@
 package edu.byu.cstaheli.cs453.query_evaluation.spelling;
 
+import edu.byu.cstaheli.cs453.common.util.DocumentProcessingFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -8,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SpellCheckerTest
 {
+
     @Test
     void getSpellingSuggestions()
     {

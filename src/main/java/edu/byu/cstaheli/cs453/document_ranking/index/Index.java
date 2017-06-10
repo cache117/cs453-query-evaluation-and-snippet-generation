@@ -1,7 +1,5 @@
 package edu.byu.cstaheli.cs453.document_ranking.index;
 
-import com.google.common.collect.Ordering;
-import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import javafx.util.Pair;
 
@@ -11,55 +9,24 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
- * An index between all of the documents and the entries in each document.
+ * An Index of Documents to the entries in a document.
  */
-public class Index
+public interface Index
 {
-    private static Index _instance;
-    /**
-     * A map from the Document Id of an entry to the entry itself.
-     */
-    private SortedSetMultimap<Integer, IndexEntry> entries;
-
-    private Index()
-    {
-        entries = TreeMultimap.create(Ordering.natural(), Ordering.natural().reversed());
-    }
-
-    /**
-     * Gets the one instance to the Index, since there is a bit of overhead in creating the Index.
-     *
-     * @return the instance of the Index.
-     */
-    public static Index getInstance()
-    {
-        if (_instance == null)
-        {
-            _instance = new Index();
-        }
-        return _instance;
-    }
-
     /**
      * Adds an entry to the index. It will be added and sorted according to its document id, as well as the differences
      * in the entry.
      *
      * @param entry the entry to add.
      */
-    public void addEntry(IndexEntry entry)
-    {
-        entries.put(entry.getDocumentId(), entry);
-    }
+    void addEntry(IndexEntry entry);
 
     /**
      * Gets a <code>SortedSet<Integer></code> of all of the document ids present in the Index.
      *
      * @return all of the document Ids.
      */
-    public SortedSet<Integer> getAllDocumentIds()
-    {
-        return (SortedSet<Integer>) entries.keySet();
-    }
+    SortedSet<Integer> getAllDocumentIds();
 
     /**
      * Gets all of the entries that contain the given word.
@@ -67,15 +34,7 @@ public class Index
      * @param word the desired word.
      * @return the entries that contain the given word.
      */
-    public SortedSet<IndexEntry> getEntriesOfWord(String word)
-    {
-//        return entries.get(word);
-        return entries
-                .values()
-                .stream()
-                .filter(i -> word.equals(i.getWord()))
-                .collect(Collectors.toCollection(TreeSet<IndexEntry>::new));
-    }
+    SortedSet<IndexEntry> getEntriesOfWord(String word);
 
     /**
      * Gets the entries of the given word in the given document id.
@@ -84,7 +43,7 @@ public class Index
      * @param documentId the document Id to search in.
      * @return the entries of the given word in the given document id.
      */
-    public SortedSet<IndexEntry> getEntriesOfWordInDocument(String word, int documentId)
+    default SortedSet<IndexEntry> getEntriesOfWordInDocument(String word, int documentId)
     {
         return getEntriesFromDocument(documentId)
                 .stream()
@@ -99,7 +58,7 @@ public class Index
      * @param documentId the document Id to search in.
      * @return the frequency of the word in the document.
      */
-    public int getFrequencyOfWordInDocument(String word, int documentId)
+    default int getFrequencyOfWordInDocument(String word, int documentId)
     {
         return getEntriesOfWordInDocument(word, documentId)
                 .stream()
@@ -113,7 +72,7 @@ public class Index
      * @param word the word to check.
      * @return the number of documents that the word is present in.
      */
-    public int getNumberOfDocumentsWordIsPresentIn(String word)
+    default int getNumberOfDocumentsWordIsPresentIn(String word)
     {
         return getDocumentIdsWhereWordPresent(word)
                 .size();
@@ -125,30 +84,21 @@ public class Index
      * @param documentId the document to get the entries from.
      * @return all of the entries from the document.
      */
-    public SortedSet<IndexEntry> getEntriesFromDocument(int documentId)
-    {
-        return entries.get(documentId);
-    }
+    SortedSet<IndexEntry> getEntriesFromDocument(int documentId);
 
     /**
-     * Gets the size of the index, based on the number of documents there are.
+     * Gets the size of the index.
      *
-     * @return the number of documents in the index.
+     * @return the size of the index.
      */
-    public int size()
-    {
-        return getAllDocumentIds().size();
-    }
+    int size();
 
     /**
      * Gets the total number of entries in the Index. This will be the total number of all entries in all documents.
      *
      * @return the total number of entries in the Index
      */
-    public int totalSize()
-    {
-        return entries.size();
-    }
+    int totalSize();
 
     /**
      * Gets all the document ids where the given word is present.
@@ -156,7 +106,7 @@ public class Index
      * @param word the word to check.
      * @return all the document ids where the given word is present.
      */
-    public SortedSet<Integer> getDocumentIdsWhereWordPresent(String word)
+    default SortedSet<Integer> getDocumentIdsWhereWordPresent(String word)
     {
         return getEntriesOfWord(word)
                 .stream()
@@ -166,10 +116,11 @@ public class Index
 
     /**
      * Gets the total frequency of a word across all documents.
+     *
      * @param word the word to check.
      * @return the total frequency of a word across all documents.
      */
-    public int totalFrequencyOfWord(String word)
+    default int totalFrequencyOfWord(String word)
     {
         return getEntriesOfWord(word)
                 .stream()
@@ -183,7 +134,7 @@ public class Index
      * @param documentId the document id to check in.
      * @return the maximum frequency in a document.
      */
-    public int mostFrequentWordFrequency(int documentId)
+    default int mostFrequentWordFrequency(int documentId)
     {
         return getEntriesOfWordInDocument(mostFrequentWord(documentId), documentId)
                 .stream()
@@ -197,13 +148,7 @@ public class Index
      * @param documentId the document id to check in.
      * @return the most frequent word in a document.
      */
-    public String mostFrequentWord(int documentId)
-    {
-        return entries
-                .get(documentId)
-                .first()
-                .getWord();
-    }
+    String mostFrequentWord(int documentId);
 
     /**
      * This method iterates through the values of the {@link TreeMultimap},
@@ -217,12 +162,5 @@ public class Index
      * <p>
      * Note that the {@link Pair} object is defined in javafx.util.Pair
      */
-    public List<Pair<Integer, Integer>> totalWordUses(String word)
-    {
-        return entries.values()
-                .stream()
-                .filter(i -> word.equals(i.getWord()))
-                .map(i -> new Pair<>(i.getDocumentId(), i.getFrequency()))
-                .collect(Collectors.toList());
-    }
+    List<Pair<Integer, Integer>> totalWordUses(String word);
 }

@@ -13,26 +13,12 @@ import java.util.StringTokenizer;
 public class StopWordsRemover
 {
     private final Set<String> stopWords;
-    private static StopWordsRemover _instance;
-
-    /**
-     * Gets the instance of stop words, since there shouldn't be more than one.
-     * @return the instance of stop words
-     */
-    public static StopWordsRemover getInstance()
-    {
-        if (_instance == null)
-        {
-            _instance = new StopWordsRemover();
-        }
-        return _instance;
-    }
 
     /**
      * Creates a {@link StopWordsRemover} from a file. This file must be src/main/resources/stopwords.txt or it will
      * not work.
      */
-    private StopWordsRemover()
+    public StopWordsRemover()
     {
         stopWords = new HashSet<>();
         //validWords = new HashSet<>();

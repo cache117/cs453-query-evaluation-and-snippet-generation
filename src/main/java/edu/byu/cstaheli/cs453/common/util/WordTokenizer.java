@@ -9,6 +9,7 @@ import java.util.List;
 public class WordTokenizer
 {
     private List<String> tokens;
+    private Dictionary dictionary;
 
     /**
      * Creates a {@link WordTokenizer} from a line.
@@ -16,6 +17,12 @@ public class WordTokenizer
      */
     public WordTokenizer(String line)
     {
+        this(DocumentProcessingFactory.getDictionaryInstance(), line);
+    }
+
+    public WordTokenizer(Dictionary dictionary, String line)
+    {
+        this.dictionary = dictionary;
         tokens = new ArrayList<>();
         parseLine(line);
     }
@@ -87,7 +94,7 @@ public class WordTokenizer
             hyphenatedWords[i] = stripExtraCharacters(hyphenatedWords[i]);
         }
         String concatenatedWord = concatenateHyphenatedWords(hyphenatedWords);
-        if (Dictionary.getInstance().wordExists(concatenatedWord))
+        if (dictionary.wordExists(concatenatedWord))
         {
             parseWord(concatenatedWord);
         }

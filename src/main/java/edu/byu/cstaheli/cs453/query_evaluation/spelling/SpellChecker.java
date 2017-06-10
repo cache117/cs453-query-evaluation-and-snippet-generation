@@ -1,5 +1,6 @@
 package edu.byu.cstaheli.cs453.query_evaluation.spelling;
 
+import edu.byu.cstaheli.cs453.common.util.*;
 import edu.byu.cstaheli.cs453.common.util.Dictionary;
 
 import java.util.*;
@@ -17,7 +18,7 @@ public class SpellChecker
      */
     public static Set<String> getSpellingSuggestions(String word)
     {
-        if (Dictionary.getInstance().wordExists(word))
+        if (DocumentProcessingFactory.getDictionaryInstance().wordExists(word))
         {
             return Collections.singleton(word);
         }
@@ -33,12 +34,12 @@ public class SpellChecker
      * Determines which words from the dictionary have the same soundex code as <code>word</code>.
      * @param word the word to check against.
      * @return the words that have the same soundex code.
-     * @see Dictionary#getDictionaryWords()
+     * @see FileDictionary#getDictionaryWords()
      * @see SoundexCode#wordsHaveSameEncoding(String, String)
      */
     public static Set<String> getWordsWithSameSoundexCode(String word)
     {
-        return getWordsWithSameSoundexCode(word, Dictionary.getInstance().getDictionaryWords());
+        return getWordsWithSameSoundexCode(word, DocumentProcessingFactory.getDictionaryInstance().getDictionaryWords());
     }
 
     /**
@@ -75,12 +76,12 @@ public class SpellChecker
      * Determines which words from the dictionary have edit distance 2 from <code>word</code>.
      * @param word the word to check against.
      * @return the words that have edit distance two.
-     * @see Dictionary#getDictionaryWords()
+     * @see FileDictionary#getDictionaryWords()
      * @see LevenshteinDistance#calculateDistance()
      */
     public static Set<String> getWordsWithTwoEditDistance(String word)
     {
-        return getWordsWithTwoEditDistance(word, Dictionary.getInstance().getDictionaryWords());
+        return getWordsWithTwoEditDistance(word, DocumentProcessingFactory.getDictionaryInstance().getDictionaryWords());
     }
 }
 

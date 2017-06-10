@@ -1,5 +1,6 @@
 package edu.byu.cstaheli.cs453.query_evaluation;
 
+import edu.byu.cstaheli.cs453.common.util.DocumentProcessingFactory;
 import edu.byu.cstaheli.cs453.document_ranking.index.Index;
 import edu.byu.cstaheli.cs453.document_ranking.index.IndexEntry;
 import edu.byu.cstaheli.cs453.document_ranking.process.DocumentProcessor;
@@ -18,14 +19,19 @@ public class Driver
 {
     private Index index;
 
-    public Driver()
+    public Driver(Index index)
     {
-        index = Index.getInstance();
+        setIndex(index);
+    }
+
+    public void setIndex(Index index)
+    {
+        this.index = index;
     }
 
     public static void main(String[] args)
     {
-        Driver driver = new Driver();
+        Driver driver = new Driver(DocumentProcessingFactory.getIndexInstance());
         driver.readInCorpus("src/main/resources");
         String[] query = {
                 //"movi action",

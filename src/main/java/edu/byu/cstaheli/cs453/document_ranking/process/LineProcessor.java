@@ -1,8 +1,6 @@
 package edu.byu.cstaheli.cs453.document_ranking.process;
 
-import edu.byu.cstaheli.cs453.common.util.WordTokenizer;
-import edu.byu.cstaheli.cs453.common.util.PorterStemmer;
-import edu.byu.cstaheli.cs453.common.util.StopWordsRemover;
+import edu.byu.cstaheli.cs453.common.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ import java.util.List;
 public class LineProcessor
 {
     private final List<String> processedWords;
-
+    private StopWordsRemover stopWordsRemover;
     /**
      * Creates a Line processor from a line.
      * @param line the line to process.
@@ -27,9 +25,20 @@ public class LineProcessor
      */
     public LineProcessor(String line)
     {
+        this(DocumentProcessingFactory.getStopWordsRemoverInstance(), line);
+    }
+
+    public LineProcessor(StopWordsRemover stopWordsRemover, String line)
+    {
+        setStopWordsRemover(stopWordsRemover);
         List<String> words = new WordTokenizer(line).getWords();
         List<String> nonStopwords = removeStopwords(words);
         processedWords = stemWords(nonStopwords);
+    }
+
+    public void setStopWordsRemover(StopWordsRemover stopWordsRemover)
+    {
+        this.stopWordsRemover = stopWordsRemover;
     }
 
     /**
@@ -73,7 +82,7 @@ public class LineProcessor
         List<String> nonStopwords = new ArrayList<>();
         for (String word : words)
         {
-            if (!StopWordsRemover.getInstance().contains(word))
+            if (!stopWordsRemover.contains(word))
             {
                 nonStopwords.add(word);
             }
