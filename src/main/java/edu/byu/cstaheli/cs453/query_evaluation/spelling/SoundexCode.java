@@ -84,6 +84,8 @@ public class SoundexCode
                 return '5';
             case 'R':
                 return '6';
+            case 216: //O with slash through it
+                return Character.MIN_VALUE;
             default:
                 throw new IllegalArgumentException(String.format("Character \"%s\" is not a valid character for spelling", character));
         }

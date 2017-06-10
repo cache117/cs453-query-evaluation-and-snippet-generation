@@ -1,10 +1,11 @@
 package edu.byu.cstaheli.cs453.common.util;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.text.Normalizer;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Created by cstaheli on 5/8/2017.
@@ -26,12 +27,13 @@ public class Dictionary
     private Dictionary()
     {
         dictionaryWords = new HashSet<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/dictionary.txt")))
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("src/main/resources/dictionary.txt"), Charset.forName("ISO-8859-1"))))
         {
             String line;
             while ((line = reader.readLine()) != null)
             {
-                dictionaryWords.add(line);
+                //Remove ' from words
+                dictionaryWords.add(sanitizeString(line));
             }
         }
         catch (IOException e)
@@ -40,8 +42,24 @@ public class Dictionary
         }
     }
 
+    private static String sanitizeString(String line)
+    {
+        return deAccent(line.replace("\'", ""));
+    }
+
+    private static String deAccent(String str) {
+        String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(nfdNormalizedString).replaceAll("");
+    }
+
     public boolean wordExists(String word)
     {
         return dictionaryWords.contains(word);
+    }
+
+    public Set<String> getDictionaryWords()
+    {
+        return dictionaryWords;
     }
 }
