@@ -34,8 +34,9 @@ public abstract class LogParser
             List<Log> queryLogs = new ArrayList<>(lines.size() - 1);
 
             //The first line is the header. Skip it.
-            for (String[] line : lines)
+            for (int i = 1; i < lines.size(); i++)
             {
+                String[] line = lines.get(i);
                 queryLogs.add(parseQueryLogFromLine(line));
             }
             return queryLogs;
