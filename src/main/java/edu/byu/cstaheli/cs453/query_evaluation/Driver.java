@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * Created by cstaheli on 6/5/2017.
+ * The Driver for Project 3.
  */
 public class Driver
 {
@@ -42,6 +42,10 @@ public class Driver
         }
     }
 
+    /**
+     * Reads in all of the files from the corpus located in the given director.
+     * @param directory the directory to read in from.
+     */
     public void readInCorpus(String directory)
     {
         try (Stream<Path> paths = Files.walk(Paths.get(directory)))
@@ -67,5 +71,10 @@ public class Driver
         {
             e.printStackTrace();
         }
+    }
+
+    public Index getIndex()
+    {
+        return index;
     }
 }
