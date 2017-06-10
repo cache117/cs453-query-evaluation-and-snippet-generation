@@ -102,4 +102,20 @@ public class SoundexCode
     {
         return encode(first).equals(encode(second));
     }
+
+    public static boolean wordsHaveSimilarEncoding(String first, String second)
+    {
+        if (wordsHaveSameEncoding(first, second))
+        {
+            return true;
+        }
+        else
+        {
+            if (encode(first).substring(0, 2).equals(encode(second).substring(0, 2)))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
