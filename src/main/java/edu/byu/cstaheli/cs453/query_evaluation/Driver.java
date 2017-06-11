@@ -63,7 +63,8 @@ public class Driver
         System.out.format("Suggested Corrections: %s\n", String.join(", ", suggestions));
         for (QueryResult result : results)
         {
-            System.out.format("Doc: %s\n%s", result.getDocumentId(), new SnippetGenerator(correctedQuery).generateSnippets());
+            int documentId = result.getDocumentId();
+            System.out.format("Doc: %s\n%s", documentId, new SnippetGenerator(correctedQuery, documentId).generateSnippets());
         }
     }
 
