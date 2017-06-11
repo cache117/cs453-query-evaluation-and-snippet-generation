@@ -1,12 +1,13 @@
 package edu.byu.cstaheli.cs453.query_evaluation.log;
 
 import edu.byu.cstaheli.cs453.common.log.LogParser;
+import edu.byu.cstaheli.cs453.common.log.QueryLog;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Contains functionality to parse Spelling Query Logs.
+ * Contains functionality to parse Spelling Query QueryLogs.
  */
 public class SpellingLogParser extends LogParser
 {
@@ -42,16 +43,15 @@ public class SpellingLogParser extends LogParser
     }
 
     /**
-     * Parses the log into a Log. A SpellingQueryLog, to be precise.
+     * Parses the log into a QueryLog.
      * @param line the line to parse from.
-     * @return the Log from the line.
-     * @see SpellingQueryLog
+     * @return the QueryLog from the line.
      */
     @Override
-    protected SpellingQueryLog parseQueryLogFromLine(String[] line)
+    protected QueryLog parseQueryLogFromLine(String[] line)
     {
         String anonId = line[0];
         String query = line[1];
-        return new SpellingQueryLog(anonId, query);
+        return new QueryLog(query, anonId);
     }
 }

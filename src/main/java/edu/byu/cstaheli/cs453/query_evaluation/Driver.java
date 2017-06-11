@@ -4,12 +4,16 @@ import edu.byu.cstaheli.cs453.common.util.DocumentProcessingFactory;
 import edu.byu.cstaheli.cs453.document_ranking.index.Index;
 import edu.byu.cstaheli.cs453.document_ranking.index.IndexEntry;
 import edu.byu.cstaheli.cs453.document_ranking.process.DocumentProcessor;
+import edu.byu.cstaheli.cs453.document_ranking.query.Query;
+import edu.byu.cstaheli.cs453.document_ranking.query.QueryResult;
+import edu.byu.cstaheli.cs453.query_evaluation.spelling.SpellChecker;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.stream.Stream;
 
 /**
@@ -24,16 +28,11 @@ public class Driver
         setIndex(index);
     }
 
-    public void setIndex(Index index)
-    {
-        this.index = index;
-    }
-
     public static void main(String[] args)
     {
         Driver driver = new Driver(DocumentProcessingFactory.getIndexInstance());
-        driver.readInCorpus("src/main/resources");
-        String[] query = {
+        driver.readInCorpus("src/main/resources/documents");
+        String[] queries = {
                 //"movi action",
                 "sentenced to prision",
                 "open cuort case",
@@ -42,14 +41,29 @@ public class Driver
                 "movie",
                 "scheduled movie screning",
         };
-        for (String queryString : query)
+        SpellChecker spellChecker = new SpellChecker();
+        for (String query : queries)
         {
-
+            String correctedQuery = spellChecker.correctQuery(query);
+            SortedSet<QueryResult> results = driver.runQuery(correctedQuery);
+            driver.handleResults(correctedQuery, results);
         }
+    }
+
+    private void handleResults(String queryString, SortedSet<QueryResult> results)
+    {
+
+    }
+
+    private SortedSet<QueryResult> runQuery(String queryString)
+    {
+        Query query = new Query(queryString);
+        return query.getResults();
     }
 
     /**
      * Reads in all of the files from the corpus located in the given director.
+     *
      * @param directory the directory to read in from.
      */
     public void readInCorpus(String directory)
@@ -82,5 +96,10 @@ public class Driver
     public Index getIndex()
     {
         return index;
+    }
+
+    public void setIndex(Index index)
+    {
+        this.index = index;
     }
 }

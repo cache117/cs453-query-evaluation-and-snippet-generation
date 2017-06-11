@@ -1,34 +1,57 @@
 package edu.byu.cstaheli.cs453.query_evaluation.spelling;
 
-import edu.byu.cstaheli.cs453.common.util.DocumentProcessingFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SpellCheckerTest
 {
+    private SpellChecker spellChecker;
 
-    @Test
-    void getSpellingSuggestions()
+    @BeforeEach
+    void setUp()
     {
-        Set<String> spellingSuggestions = SpellChecker.getSpellingSuggestions("prisson");
-        assertTrue(spellingSuggestions.contains("prison"));
-        assertTrue(spellingSuggestions.contains("poison"));
-        assertFalse(spellingSuggestions.contains("prisson"));
-        assertFalse(spellingSuggestions.contains("priso"));
-
-        spellingSuggestions = SpellChecker.getSpellingSuggestions("cuort");
-
-        assertTrue(spellingSuggestions.contains("court"));
+        spellChecker = new SpellChecker();
     }
 
     @Test
-    void getWordsWithSameSoundexCode()
+    void getMostLikelySuggestion()
     {
-        Set<String> spellingSuggestions = SpellChecker.getWordsWithSameSoundexCode("prisson");
-        assertTrue(spellingSuggestions.contains("prison"));
+        Set<String> suggestions = Collections.singleton("suggestion");
+        String mostLikelySuggestion = spellChecker.getMostLikelySuggestion(suggestions, "suggesstion");
+        assertEquals("suggestion", mostLikelySuggestion);
+
+        suggestions = new HashSet<>(3);
+        suggestions.add("potato");
+        suggestions.add("potatoes");
+        suggestions.add("pot");
+        mostLikelySuggestion = spellChecker.getMostLikelySuggestion(suggestions, "potatoe");
+        assertEquals("something", mostLikelySuggestion);
+
     }
+
+    @Test
+    void getSuggestionWithHighestProbability()
+    {
+    }
+
+    @Test
+    void getProbabilityOfSuggestion()
+    {
+        double probability = spellChecker.getProbabilityOfSuggestion("suggestion", "suggestion");
+        assertEquals(1.0, probability);
+
+
+    }
+
+    @Test
+    void getCorrectedQuery()
+    {
+    }
+
 }

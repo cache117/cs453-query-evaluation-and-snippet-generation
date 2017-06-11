@@ -1,87 +1,115 @@
 package edu.byu.cstaheli.cs453.query_evaluation.spelling;
 
-import edu.byu.cstaheli.cs453.common.util.*;
-import edu.byu.cstaheli.cs453.common.util.Dictionary;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
- * Used to get spelling suggestions for a word.
+ * Created by cstaheli on 6/10/2017.
  */
 public class SpellChecker
 {
+    private String originalQuery;
+    private String correctedQuery;
+
     /**
-     * Gets all of the possible spelling suggestions for <code>word</code>, using edit distance and SoundexCodes.
-     * @param word the word to check.
-     * @return valid spelling suggestions.
+     * Creates a SpellChecker to correct queries.
      */
-    public static Set<String> getSpellingSuggestions(String word)
+    public SpellChecker()
     {
-        if (DocumentProcessingFactory.getDictionaryInstance().wordExists(word))
+
+    }
+
+    /**
+     * Gets the corrected version of the query (correcting misspellings).
+     *
+     * @param originalQuery the original query to correct, if necessary.
+     * @return the corrected version of the query.
+     */
+    public String correctQuery(String originalQuery)
+    {
+        this.originalQuery = originalQuery;
+        String[] individualWords = originalQuery.split(" ");
+        for (int i = 0; i < individualWords.length; i++)
         {
-            return Collections.singleton(word);
+            Set<String> suggestions = SpellingSuggester.getSpellingSuggestions(individualWords[i]);
+            individualWords[i] = getMostLikelySuggestion(suggestions, originalQuery);
         }
-        Set<String> wordsWithTwoEditDistance = getWordsWithTwoEditDistance(word);
-        Set<String> sameSoundexCode = getWordsWithSameSoundexCode(word);
-        Set<String> spellingSuggestions = new HashSet<>(wordsWithTwoEditDistance);
-        //spellingSuggestions.addAll(sameSoundexCode);
-
-        return spellingSuggestions;
+        this.correctedQuery = String.join(" ", individualWords);
+        return this.correctedQuery;
     }
 
     /**
-     * Determines which words from the dictionary have the same soundex code as <code>word</code>.
-     * @param word the word to check against.
-     * @return the words that have the same soundex code.
-     * @see FileDictionary#getDictionaryWords()
-     * @see SoundexCode#wordsHaveSameEncoding(String, String)
+     * Gets the most likely suggestion from a set of suggestions.
+     *
+     * @param suggestions  the set of suggestions for the original word.
+     * @param originalWord the originally typed word.
+     * @return the most likely suggestion from a set of suggestions.
      */
-    public static Set<String> getWordsWithSameSoundexCode(String word)
+    String getMostLikelySuggestion(Set<String> suggestions, String originalWord)
     {
-        return getWordsWithSameSoundexCode(word, DocumentProcessingFactory.getDictionaryInstance().getDictionaryWords());
+        if (suggestions.size() == 1)
+        {
+            return new ArrayList<>(suggestions).get(0);
+        }
+        else
+        {
+            Map<String, Double> probabilities = new HashMap<>();
+            for (String suggestion : suggestions)
+            {
+                probabilities.put(suggestion, getProbabilityOfSuggestion(suggestion, originalWord));
+            }
+            // Returns the item with the highest probability
+            return getSuggestionWithHighestProbability(probabilities);
+        }
     }
 
     /**
-     * Determines which words from <code>words</code> have the same soundex code as <code>word</code>.
-     * @param word the word to check against.
-     * @param words the set of words to compare.
-     * @return the words that have the same soundex code.
-     * @see SoundexCode#wordsHaveSameEncoding(String, String)
+     * Gets the item with the maximum probability.
+     *
+     * @param probabilities a {@link Map} from words to probabilities.
+     * @return the item with the maximum probability.
      */
-    public static Set<String> getWordsWithSameSoundexCode(String word, Set<String> words)
+    String getSuggestionWithHighestProbability(Map<String, Double> probabilities)
     {
-        return words
-                .stream()
-                .filter(dictionaryWord -> SoundexCode.wordsHaveSameEncoding(dictionaryWord, word))
-                .collect(Collectors.toSet());
+        return Collections.max(probabilities.entrySet(), Map.Entry.comparingByValue())
+                .getKey();
     }
 
     /**
-     * Determines which words from <code>words</code> have edit distance 2 from <code>word</code>.
-     * @param word the word to check against.
-     * @param words the set of words to compare.
-     * @return the words that have edit distance two.
-     * @see LevenshteinDistance#calculateDistance()
+     * Gets the probability of <code>suggestion</code> being the intended word when <code>originalWord</code> was entered.
+     *
+     * @param suggestion   the suggested word.
+     * @param originalWord the original word.
+     * @return the probability of the suggested word being correct.
      */
-    public static Set<String> getWordsWithTwoEditDistance(String word, Set<String> words)
+    Double getProbabilityOfSuggestion(String suggestion, String originalWord)
     {
-        return words
-                .stream()
-                .filter(dictionaryWord -> new LevenshteinDistance(dictionaryWord, word).calculateDistance() <= 2)
-                .collect(Collectors.toSet());
+        if (suggestion.equals(originalWord))
+        {
+            return 1.0;
+        }
+        else
+        {
+            return new Random().nextDouble();
+        }
     }
 
     /**
-     * Determines which words from the dictionary have edit distance 2 from <code>word</code>.
-     * @param word the word to check against.
-     * @return the words that have edit distance two.
-     * @see FileDictionary#getDictionaryWords()
-     * @see LevenshteinDistance#calculateDistance()
+     * Gets the corrected query.
+     *
+     * @return the corrected query.
      */
-    public static Set<String> getWordsWithTwoEditDistance(String word)
+    public String getCorrectedQuery()
     {
-        return getWordsWithTwoEditDistance(word, DocumentProcessingFactory.getDictionaryInstance().getDictionaryWords());
+        return correctedQuery;
+    }
+
+    /**
+     * Gets the original query.
+     *
+     * @return the original query.
+     */
+    public String getOriginalQuery()
+    {
+        return originalQuery;
     }
 }
-

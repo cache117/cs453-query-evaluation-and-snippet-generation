@@ -2,14 +2,17 @@ package edu.byu.cstaheli.cs453.common.util;
 
 import edu.byu.cstaheli.cs453.document_ranking.index.DocumentIndex;
 import edu.byu.cstaheli.cs453.document_ranking.index.Index;
+import edu.byu.cstaheli.cs453.query_evaluation.log.SpellingLogParser;
 
 /**
- * Created by cstaheli on 6/10/2017.
+ * Holds instances of the classes that should only have one instance.
  */
 public class DocumentProcessingFactory
 {
     private static Index indexInstance;
     private static Dictionary dictionaryInstance;
+    private static StopWordsRemover stopWordsRemoverInstance;
+    private static SpellingLogParser spellingLogParser;
 
     /**
      * Gets the one instance to the Index, since there is a bit of overhead in creating the Index.
@@ -33,6 +36,7 @@ public class DocumentProcessingFactory
     /**
      * Gets an instance of the Dictionary, since creating one is a bit of an overhead, and all instances should
      * be the same.
+     *
      * @return an instance of the Dictionary.
      */
     public static Dictionary getDictionaryInstance()
@@ -49,10 +53,9 @@ public class DocumentProcessingFactory
         dictionaryInstance = dictionary;
     }
 
-    private static StopWordsRemover stopWordsRemoverInstance;
-
     /**
      * Gets the instance of stop words, since there shouldn't be more than one.
+     *
      * @return the instance of stop words
      */
     public static StopWordsRemover getStopWordsRemoverInstance()
@@ -62,5 +65,19 @@ public class DocumentProcessingFactory
             stopWordsRemoverInstance = new StopWordsRemover();
         }
         return stopWordsRemoverInstance;
+    }
+
+    /**
+     * Gets the instance of spelling log parser, since there shouldn't be more than one.
+     *
+     * @return the instance of spelling log parser.
+     */
+    public static SpellingLogParser getSpellingLogParserInstance()
+    {
+        if (spellingLogParser == null)
+        {
+            spellingLogParser = new SpellingLogParser("src/main/resources/query_log.txt)");
+        }
+        return spellingLogParser;
     }
 }

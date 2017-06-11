@@ -4,23 +4,21 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * The basic functionality behind a Log parser. Logs can differ, to a degree, but most pieces are the same.
+ * The basic functionality behind a QueryLog parser. QueryLogs can differ, to a degree, but most pieces are the same.
  */
 public abstract class LogParser
 {
-    private List<Log> logs;
+    private QueryLogs queryLogs;
 
     public LogParser(String fileName)
     {
-        logs = parseFile(fileName);
+        queryLogs = parseFile(fileName);
     }
 
     /**
@@ -29,16 +27,16 @@ public abstract class LogParser
      * by a child class.
      *
      * @param fileName the name of the file to parse.
-     * @return a list of all of the logs in the file.
+     * @return a list of all of the queryLogs in the file.
      */
-    final protected List<Log> parseFile(String fileName)
+    final protected QueryLogs parseFile(String fileName)
     {
         try
         {
             List<String[]> lines = getLinesFromFile(fileName);
 
             //Set the initial size to the number of lines - 1 (not including the header)
-            List<Log> queryLogs = new ArrayList<>(lines.size() - 1);
+            List<QueryLog> queryLogs = new ArrayList<>(lines.size() - 1);
 
             //The first line is the header. Skip it.
             for (int i = 1; i < lines.size(); i++)
@@ -46,13 +44,13 @@ public abstract class LogParser
                 String[] line = lines.get(i);
                 queryLogs.add(parseQueryLogFromLine(line));
             }
-            return queryLogs;
+            return new QueryLogs(queryLogs);
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
-        return Collections.emptyList();
+        return new QueryLogs(Collections.emptyList());
     }
 
     /**
@@ -90,12 +88,12 @@ public abstract class LogParser
 
     /**
      * Method that must be overridden by a child class. Part of the template method. This should return a
-     * <code>Log</code> that represents the actual contents of the Log file.
+     * <code>QueryLog</code> that represents the actual contents of the QueryLog file.
      *
      * @param line the line to parse from.
-     * @return the <code>Log</code> representation of the line.
+     * @return the <code>QueryLog</code> representation of the line.
      */
-    protected abstract Log parseQueryLogFromLine(String[] line);
+    protected abstract QueryLog parseQueryLogFromLine(String[] line);
 
     /**
      * Reads all of the lines of the file into a list.
@@ -122,11 +120,11 @@ public abstract class LogParser
     }
 
     /**
-     * Gets all of the logs that were parsed from the file.
-     * @return the logs that were parsed from the file.
+     * Gets all of the queryLogs that were parsed from the file.
+     * @return the queryLogs that were parsed from the file.
      */
-    public List<Log> getLogs()
+    public QueryLogs getQueryLogs()
     {
-        return logs;
+        return queryLogs;
     }
 }
