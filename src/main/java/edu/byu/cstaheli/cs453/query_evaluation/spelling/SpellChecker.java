@@ -1,5 +1,7 @@
 package edu.byu.cstaheli.cs453.query_evaluation.spelling;
 
+import edu.byu.cstaheli.cs453.common.util.DocumentProcessingFactory;
+
 import java.util.*;
 
 /**
@@ -60,6 +62,19 @@ public class SpellChecker
             // Returns the item with the highest probability
             return getSuggestionWithHighestProbability(probabilities);
         }
+    }
+
+    public String getMisspelledWordFromQuery(String query)
+    {
+        String[] queryArray = query.split(" ");
+        for (String word : queryArray)
+        {
+            if (!DocumentProcessingFactory.getDictionaryInstance().wordExists(word))
+            {
+                return word;
+            }
+        }
+        return null;
     }
 
     /**

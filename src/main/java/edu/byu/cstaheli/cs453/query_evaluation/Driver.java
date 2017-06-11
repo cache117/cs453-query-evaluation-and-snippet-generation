@@ -6,13 +6,17 @@ import edu.byu.cstaheli.cs453.document_ranking.index.IndexEntry;
 import edu.byu.cstaheli.cs453.document_ranking.process.DocumentProcessor;
 import edu.byu.cstaheli.cs453.document_ranking.query.Query;
 import edu.byu.cstaheli.cs453.document_ranking.query.QueryResult;
+import edu.byu.cstaheli.cs453.query_evaluation.snippet.SnippetGenerator;
+import edu.byu.cstaheli.cs453.query_evaluation.spelling.SoundexCode;
 import edu.byu.cstaheli.cs453.query_evaluation.spelling.SpellChecker;
+import edu.byu.cstaheli.cs453.query_evaluation.spelling.SpellingSuggester;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Stream;
 
@@ -46,13 +50,21 @@ public class Driver
         {
             String correctedQuery = spellChecker.correctQuery(query);
             SortedSet<QueryResult> results = driver.runQuery(correctedQuery);
-            driver.handleResults(correctedQuery, results);
+            String misspelledWord = spellChecker.getMisspelledWordFromQuery(query);
+            driver.handleResults(query, misspelledWord, correctedQuery, results);
         }
     }
 
-    private void handleResults(String queryString, SortedSet<QueryResult> results)
+    private void handleResults(String originalQuery, String misspelledWord, String correctedQuery, SortedSet<QueryResult> results)
     {
-
+        System.out.format("Original Query: %s\tCorrectedQuery: %s\n", originalQuery, correctedQuery);
+        String soundexCode = SoundexCode.encode(misspelledWord);
+        Set<String> suggestions = SpellingSuggester.getSpellingSuggestions(misspelledWord);
+        System.out.format("Suggested Corrections: %s\n", String.join(", ", suggestions));
+        for (QueryResult result : results)
+        {
+            System.out.format("Doc: %s\n%s", result.getDocumentId(), new SnippetGenerator(correctedQuery).generateSnippets());
+        }
     }
 
     private SortedSet<QueryResult> runQuery(String queryString)

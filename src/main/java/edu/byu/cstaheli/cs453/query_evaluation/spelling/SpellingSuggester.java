@@ -19,7 +19,7 @@ public class SpellingSuggester
      * @param word the word to check.
      * @return valid spelling suggestions.
      */
-    static Set<String> getSpellingSuggestions(String word)
+    public static Set<String> getSpellingSuggestions(String word)
     {
         if (DocumentProcessingFactory.getDictionaryInstance().wordExists(word))
         {
