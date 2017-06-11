@@ -30,10 +30,22 @@ public class LineProcessor
 
     public LineProcessor(StopWordsRemover stopWordsRemover, String line)
     {
+        this(stopWordsRemover, line, true, true);
+    }
+
+    public LineProcessor(StopWordsRemover stopWordsRemover, String line, boolean removeStopwords, boolean stemWords)
+    {
         setStopWordsRemover(stopWordsRemover);
         List<String> words = new WordTokenizer(line).getWords();
-        List<String> nonStopwords = removeStopwords(words);
-        processedWords = stemWords(nonStopwords);
+
+        List<String> nonStopwords = (removeStopwords) ? removeStopwords(words) : words;
+        List<String> stemmedWords = (stemWords) ? stemWords(nonStopwords) : nonStopwords;
+        processedWords = stemmedWords;
+    }
+
+    public LineProcessor(String line, boolean removeStopwords, boolean stemWords)
+    {
+        this(DocumentProcessingFactory.getStopWordsRemoverInstance(), line, removeStopwords, stemWords);
     }
 
     public void setStopWordsRemover(StopWordsRemover stopWordsRemover)

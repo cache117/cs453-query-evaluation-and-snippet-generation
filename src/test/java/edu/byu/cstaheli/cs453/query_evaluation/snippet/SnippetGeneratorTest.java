@@ -14,6 +14,8 @@ class SnippetGeneratorTest
     {
         SnippetGenerator snippetGenerator = new SnippetGenerator("abuse", 2);
         String snippets = snippetGenerator.generateSnippets();
+        assertTrue(snippets.contains("abuse"));
+
     }
 
 }
