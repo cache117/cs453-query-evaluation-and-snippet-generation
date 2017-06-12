@@ -81,7 +81,7 @@ public class SnippetGenerator
             double overlap = (double) findQueryOverlap(uniqueWordsInQuery, uniqueWordsInSentence) / sanitizedSentence.length();
             double totalOverlap = (double) findTotalQueryOverLap(uniqueWordsInQuery, sanitizedSentence) / sanitizedSentence.length();
             double sentenceSignificanceFactor = getSignificanceFactorOfSentence(sanitizedSentence.split(" "), significanceFactor);
-            double totalSentenceWeight = (firstSentenceWeight + overlap + totalOverlap + sentenceSignificanceFactor) / 4;
+            double totalSentenceWeight = (firstSentenceWeight + overlap + totalOverlap + sentenceSignificanceFactor);
             sentenceWeights.put(sentence, totalSentenceWeight);
         }
         return sentenceWeights;

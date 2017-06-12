@@ -37,7 +37,7 @@ public class Driver
         Driver driver = new Driver(DocumentProcessingFactory.getIndexInstance());
         driver.readInCorpus("src/main/resources/documents");
         String[] queries = {
-                //"movi action",
+                "movi action",
                 "sentenced to prision",
                 "open cuort case",
                 "entretainment group",
