@@ -3,6 +3,12 @@ package edu.byu.cstaheli.cs453.common.util;
 import edu.byu.cstaheli.cs453.document_ranking.index.DocumentIndex;
 import edu.byu.cstaheli.cs453.document_ranking.index.Index;
 import edu.byu.cstaheli.cs453.query_evaluation.log.SpellingLogParser;
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Holds instances of the classes that should only have one instance.
@@ -12,7 +18,8 @@ public class DocumentProcessingFactory
     private static Index indexInstance;
     private static Dictionary dictionaryInstance;
     private static StopWordsRemover stopWordsRemoverInstance;
-    private static SpellingLogParser spellingLogParser;
+    private static SpellingLogParser spellingLogParserInstance;
+    private static NameFinderME nameFinderInstance;
 
     /**
      * Gets the one instance to the Index, since there is a bit of overhead in creating the Index.
@@ -74,10 +81,28 @@ public class DocumentProcessingFactory
      */
     public static SpellingLogParser getSpellingLogParserInstance()
     {
-        if (spellingLogParser == null)
+        if (spellingLogParserInstance == null)
         {
-            spellingLogParser = new SpellingLogParser("src/main/resources/query_log.txt");
+            spellingLogParserInstance = new SpellingLogParser("src/main/resources/query_log.txt");
         }
-        return spellingLogParser;
+        return spellingLogParserInstance;
+    }
+
+    public static NameFinderME getNameFinderInstance()
+    {
+        if (nameFinderInstance == null)
+        {
+            try
+            {
+                InputStream modelIn = new FileInputStream("src/main/resources/en-ner-person.bin");
+                TokenNameFinderModel model = new TokenNameFinderModel(modelIn);
+                nameFinderInstance = new NameFinderME(model);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return nameFinderInstance;
     }
 }

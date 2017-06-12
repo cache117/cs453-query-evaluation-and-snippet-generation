@@ -4,14 +4,16 @@ import com.google.common.collect.Ordering;
 import edu.byu.cstaheli.cs453.common.util.DocumentProcessingFactory;
 import edu.byu.cstaheli.cs453.document_ranking.index.Index;
 import edu.byu.cstaheli.cs453.document_ranking.process.LineProcessor;
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
+import opennlp.tools.util.Span;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -76,15 +78,92 @@ public class SnippetGenerator
             String sentence = sentences[i];
             String sanitizedSentence = String.join(" ", new LineProcessor(sentence, true, false).getProcessedWords());
             Set<String> uniqueWordsInSentence = getUniqueWordsInString(sanitizedSentence);
-            //First or second sentence
-            double firstSentenceWeight = (i < 3) ? 1.0 : 0;
+
+            //Required Features (minus headings, since that doesn't apply)
+            double firstSentenceWeight = getSentenceNumberWeight(i + 1);
             double overlap = (double) findQueryOverlap(uniqueWordsInQuery, uniqueWordsInSentence) / sanitizedSentence.length();
             double totalOverlap = (double) findTotalQueryOverLap(uniqueWordsInQuery, sanitizedSentence) / sanitizedSentence.length();
             double sentenceSignificanceFactor = getSignificanceFactorOfSentence(sanitizedSentence.split(" "), significanceFactor);
-            double totalSentenceWeight = (firstSentenceWeight + overlap + totalOverlap + sentenceSignificanceFactor);
+            double longestContiguousRun = (double) getLongestContiguousRun(sanitizedSentence, uniqueWordsInQuery) / sanitizedSentence.length();
+
+            //My own features, which are weighted less that the previous features
+            double numberOfUniqueWords = (double) uniqueWordsInSentence.size() / sanitizedSentence.length() * 2;
+            double numberOfCapitalizedWords = (double) getNumberOfCapitalizedWords(sentence) / sanitizedSentence.length() * 2;
+            double numberOfNamedEntities = (double) getNumberOfNamedEntities(sentence) / sanitizedSentence.length() * 2;
+
+            //Total the weights and store that
+            double totalSentenceWeight = (firstSentenceWeight + overlap + totalOverlap + sentenceSignificanceFactor +
+                    longestContiguousRun + numberOfUniqueWords + numberOfCapitalizedWords + numberOfNamedEntities);
+
             sentenceWeights.put(sentence, totalSentenceWeight);
         }
         return sentenceWeights;
+    }
+
+    private int getNumberOfNamedEntities(String sentence)
+    {
+        NameFinderME nameFinder = DocumentProcessingFactory.getNameFinderInstance();
+        if (nameFinder != null)
+        {
+            Span[] spans = nameFinder.find(sentence.split(" "));
+            nameFinder.clearAdaptiveData();
+            return spans.length;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    /**
+     * First and second sentences should have higher weight. This is not 0 based. If iterating, pass in the index + 1.
+     *
+     * @param sentenceNumber the sentence number.
+     * @return 1 if sentenceNumber is 1 or 2, 0 otherwise.
+     */
+    private int getSentenceNumberWeight(int sentenceNumber)
+    {
+        return (sentenceNumber < 3) ? 1 : 0;
+    }
+
+    private int getNumberOfCapitalizedWords(String sentence)
+    {
+        int counter = 0;
+        for (String word : sentence.split(" "))
+        {
+            if (!word.equals(word.toLowerCase()))
+            {
+                ++counter;
+            }
+        }
+        return counter;
+    }
+
+    int getLongestContiguousRun(String sanitizedSentence, Set<String> uniqueWordsInQuery)
+    {
+        int maxCount = 0, count = 0;
+        for (String word : sanitizedSentence.split(" "))
+        {
+            if (uniqueWordsInQuery.contains(word))
+            {
+                ++count;
+                //Save the counter if it is better
+                if (count > maxCount)
+                {
+                    maxCount = count;
+                }
+            }
+            else
+            {
+                //Reset the counter. Save it if it is better
+                if (count > maxCount)
+                {
+                    maxCount = count;
+                }
+                count = 0;
+            }
+        }
+        return maxCount;
     }
 
     private double getSignificanceFactorOfSentence(String[] sentence, double significanceFactor)

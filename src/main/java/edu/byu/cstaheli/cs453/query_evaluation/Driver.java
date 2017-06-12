@@ -38,11 +38,11 @@ public class Driver
         driver.readInCorpus("src/main/resources/documents");
         String[] queries = {
                 "movi action",
-                "sentenced to prision",
-                "open cuort case",
-                "entretainment group",
-                "tv axtor",
-                "scheduled movie screning",
+//                "sentenced to prision",
+//                "open cuort case",
+//                "entretainment group",
+//                "tv axtor",
+//                "scheduled movie screning",
         };
         SpellChecker spellChecker = new SpellChecker();
         for (String query : queries)
