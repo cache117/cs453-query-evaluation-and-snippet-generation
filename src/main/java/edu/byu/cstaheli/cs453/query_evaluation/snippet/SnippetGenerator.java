@@ -40,16 +40,23 @@ public class SnippetGenerator
 
             SentenceDetector detector = new SentenceDetectorME(new SentenceModel(new File("src/main/resources/en-sent.bin")));
             String[] sentences = detector.sentDetect(file);
-            Map<String, Double> sentenceWeights = getSentenceWeights(sentences);
-            List<String> snippets = sentenceWeights
-                    .entrySet()
-                    .stream()
-                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                    .limit(2)
-                    .map(Map.Entry::getKey)
-                    .collect(Collectors.toList());
+            if (sentences.length == 1)
+            {
+                return sentences[0];
+            }
+            else
+            {
+                Map<String, Double> sentenceWeights = getSentenceWeights(sentences);
+                List<String> snippets = sentenceWeights
+                        .entrySet()
+                        .stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .limit(2)
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toList());
 
-            return snippets.get(0) + " ... " + snippets.get(1);
+                return snippets.get(0) + " ... " + snippets.get(1);
+            }
         }
         catch (IOException e)
         {

@@ -1,6 +1,8 @@
 package edu.byu.cstaheli.cs453.query_evaluation.spelling;
 
+import edu.byu.cstaheli.cs453.common.log.QueryLogs;
 import edu.byu.cstaheli.cs453.common.util.DocumentProcessingFactory;
+import edu.byu.cstaheli.cs453.document_ranking.index.Index;
 
 import java.util.*;
 
@@ -104,7 +106,21 @@ public class SpellChecker
         }
         else
         {
-            return new Random().nextDouble();
+            QueryLogs queryLogs = DocumentProcessingFactory.getSpellingLogParserInstance().getQueryLogs();
+            int numberOfCorrections = queryLogs.numberOfCorrections(suggestion, originalWord);
+            int numberOfAnyCorrections = queryLogs.numberOfCorrections(suggestion);
+            if (numberOfCorrections == 0 || numberOfAnyCorrections == 0)
+            {
+                return 0d;
+            }
+            else
+            {
+                double probabilityOfSuggestionGivenOriginal = (double) numberOfCorrections / (double) numberOfAnyCorrections;
+
+                Index index = DocumentProcessingFactory.getIndexInstance();
+                double probabilityOfSuggestion = (double) index.totalFrequencyOfWord(suggestion) / (double) index.mostFrequentWordFrequency();
+                return probabilityOfSuggestionGivenOriginal * probabilityOfSuggestion;
+            }
         }
     }
 

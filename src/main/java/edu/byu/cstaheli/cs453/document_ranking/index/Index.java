@@ -145,6 +145,19 @@ public interface Index
     /**
      * Gets the most frequent word in a document.
      *
+     * @return the most frequent word in a document.
+     */
+    default int mostFrequentWordFrequency()
+    {
+        return (int) getAllDocumentIds()
+                .stream()
+                .map(this::mostFrequentWordFrequency)
+                .count();
+    }
+
+    /**
+     * Gets the most frequent word in a document.
+     *
      * @param documentId the document id to check in.
      * @return the most frequent word in a document.
      */

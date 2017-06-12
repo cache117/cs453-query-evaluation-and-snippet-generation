@@ -25,12 +25,8 @@ public class SpellingSuggester
         {
             return Collections.singleton(word);
         }
-        Set<String> wordsWithTwoEditDistance = getWordsWithTwoEditDistance(word);
-        Set<String> sameSoundexCode = getWordsWithSameSoundexCode(word);
-        Set<String> spellingSuggestions = new HashSet<>(wordsWithTwoEditDistance);
-        //spellingSuggestions.addAll(sameSoundexCode);
-
-        return spellingSuggestions;
+        Set<String> wordsWithSameSoundexCode = getWordsWithSameSoundexCode(word);
+        return getWordsWithTwoEditDistance(word, wordsWithSameSoundexCode);
     }
 
     /**

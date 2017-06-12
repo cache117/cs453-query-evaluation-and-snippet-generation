@@ -96,6 +96,12 @@ public class QueryLogs
                 ).count();
     }
 
+    public int numberOfCorrections(String suggestedWord)
+    {
+        return sessionIdsWithWord(suggestedWord)
+                .size();
+    }
+
     public Map<String, List<QueryLog>> getSessionIdMapping()
     {
         return logs

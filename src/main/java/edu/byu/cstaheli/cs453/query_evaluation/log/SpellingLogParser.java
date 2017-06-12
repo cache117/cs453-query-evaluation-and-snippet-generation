@@ -50,8 +50,8 @@ public class SpellingLogParser extends LogParser
     @Override
     protected QueryLog parseQueryLogFromLine(String[] line)
     {
-        String anonId = line[0];
+        String sessionId = line[0];
         String query = line[1];
-        return new QueryLog(query, anonId);
+        return new QueryLog(sessionId, query);
     }
 }

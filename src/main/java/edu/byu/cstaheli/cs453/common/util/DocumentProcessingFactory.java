@@ -76,7 +76,7 @@ public class DocumentProcessingFactory
     {
         if (spellingLogParser == null)
         {
-            spellingLogParser = new SpellingLogParser("src/main/resources/query_log.txt)");
+            spellingLogParser = new SpellingLogParser("src/main/resources/query_log.txt");
         }
         return spellingLogParser;
     }

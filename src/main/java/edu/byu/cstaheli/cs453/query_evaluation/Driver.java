@@ -42,7 +42,6 @@ public class Driver
                 "open cuort case",
                 "entretainment group",
                 "tv axtor",
-                "movie",
                 "scheduled movie screning",
         };
         SpellChecker spellChecker = new SpellChecker();
@@ -57,15 +56,19 @@ public class Driver
 
     private void handleResults(String originalQuery, String misspelledWord, String correctedQuery, SortedSet<QueryResult> results)
     {
-        System.out.format("Original Query: %s\tCorrectedQuery: %s\n", originalQuery, correctedQuery);
+        System.out.format("Original Query: %s\tCorrected Query: %s\n", originalQuery, correctedQuery);
         String soundexCode = SoundexCode.encode(misspelledWord);
+        System.out.format("Soundex Code: %s\n", soundexCode);
         Set<String> suggestions = SpellingSuggester.getSpellingSuggestions(misspelledWord);
         System.out.format("Suggested Corrections: %s\n", String.join(", ", suggestions));
+        int counter = 0;
         for (QueryResult result : results)
         {
+            if (counter++ == 5) break;
             int documentId = result.getDocumentId();
-            System.out.format("Doc: %s\n%s", documentId, new SnippetGenerator(correctedQuery, documentId).generateSnippets());
+            System.out.format("Doc: %s\n%s\n\n", documentId, new SnippetGenerator(correctedQuery, documentId).generateSnippets());
         }
+        System.out.print("\n");
     }
 
     private SortedSet<QueryResult> runQuery(String queryString)
