@@ -32,6 +32,10 @@ public class Driver
         setIndex(index);
     }
 
+    /**
+     * The entry point for the driver.
+     * @param args not used.
+     */
     public static void main(String[] args)
     {
         Driver driver = new Driver(DocumentProcessingFactory.getIndexInstance());
@@ -54,6 +58,13 @@ public class Driver
         }
     }
 
+    /**
+     * Outputs the relevant information for project 3 from the given inputs.
+     * @param originalQuery the original query, with misspellings.
+     * @param misspelledWord the misspelled word in the query.
+     * @param correctedQuery the corrected version of the query.
+     * @param results the results of running the corrected query.
+     */
     private void handleResults(String originalQuery, String misspelledWord, String correctedQuery, SortedSet<QueryResult> results)
     {
         System.out.format("Original Query: %s\tCorrected Query: %s\n", originalQuery, correctedQuery);
@@ -71,6 +82,11 @@ public class Driver
         System.out.print("\n");
     }
 
+    /**
+     * Runs the given query and gets the results.
+     * @param queryString the query to run.
+     * @return the results, sorted by relevance.
+     */
     private SortedSet<QueryResult> runQuery(String queryString)
     {
         Query query = new Query(queryString);
