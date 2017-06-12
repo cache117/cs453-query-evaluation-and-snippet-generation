@@ -2,6 +2,7 @@ package edu.byu.cstaheli.cs453.query_evaluation.spelling;
 
 import edu.byu.cstaheli.cs453.common.log.QueryLogs;
 import edu.byu.cstaheli.cs453.common.util.DocumentProcessingFactory;
+import edu.byu.cstaheli.cs453.common.util.PorterStemmer;
 import edu.byu.cstaheli.cs453.document_ranking.index.Index;
 
 import java.util.*;
@@ -118,7 +119,8 @@ public class SpellChecker
                 double probabilityOfSuggestionGivenOriginal = (double) numberOfCorrections / (double) numberOfAnyCorrections;
 
                 Index index = DocumentProcessingFactory.getIndexInstance();
-                double probabilityOfSuggestion = (double) index.totalFrequencyOfWord(suggestion) / (double) index.mostFrequentWordFrequency();
+                String stemmedWord = new PorterStemmer().stem(suggestion);
+                double probabilityOfSuggestion = (double) index.totalFrequencyOfWord(stemmedWord) / (double) index.mostFrequentWordFrequency();
                 return probabilityOfSuggestionGivenOriginal * probabilityOfSuggestion;
             }
         }
