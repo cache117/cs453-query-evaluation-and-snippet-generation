@@ -5,7 +5,11 @@ import edu.byu.cstaheli.cs453.document_ranking.index.Index;
 import edu.byu.cstaheli.cs453.query_evaluation.log.SpellingLogParser;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
+import opennlp.tools.sentdetect.SentenceDetector;
+import opennlp.tools.sentdetect.SentenceDetectorME;
+import opennlp.tools.sentdetect.SentenceModel;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +24,7 @@ public class DocumentProcessingFactory
     private static StopWordsRemover stopWordsRemoverInstance;
     private static SpellingLogParser spellingLogParserInstance;
     private static NameFinderME nameFinderInstance;
+    private static SentenceDetector sentenceDetectorInstance;
 
     /**
      * Gets the one instance to the Index, since there is a bit of overhead in creating the Index.
@@ -88,6 +93,10 @@ public class DocumentProcessingFactory
         return spellingLogParserInstance;
     }
 
+    /**
+     * Gets the named entity recognizer instance.
+     * @return the named entity recognizer instance.
+     */
     public static NameFinderME getNameFinderInstance()
     {
         if (nameFinderInstance == null)
@@ -104,5 +113,25 @@ public class DocumentProcessingFactory
             }
         }
         return nameFinderInstance;
+    }
+
+    /**
+     * Gets the sentence detector instance.
+     * @return the sentence detector instance.
+     */
+    public static SentenceDetector getSentenceDetectorInstance()
+    {
+        if (sentenceDetectorInstance == null)
+        {
+            try
+            {
+                sentenceDetectorInstance = new SentenceDetectorME(new SentenceModel(new File("src/main/resources/en-sent.bin")));
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return sentenceDetectorInstance;
     }
 }
